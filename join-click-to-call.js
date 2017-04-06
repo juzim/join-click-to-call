@@ -13,6 +13,9 @@ const deviceId = 'FOO';
 const apiKey = 'BAR';
 
 const placeCall = function (number) {
+    if (!confirm('Call ' + number + '?')) {
+      return;
+    }
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", 'https://joinjoaomgcd.appspot.com/_ah/api/messaging/v1/sendPush?deviceId=' + deviceId + '&callnumber=' + number + '&apikey=' + apiKey);
     xmlHttp.send( null );
@@ -23,18 +26,23 @@ const placeCall = function (number) {
 
     var nodes = document.querySelectorAll("a[href^='tel:']");
     for (let i = 0;i<nodes.length;i++){
-        var number = nodes[i].href.slice(4);
-        nodes[i].href = '#';
-        nodes[0].removeAttribute("target");
-        nodes[i].addEventListener('click', function(){placeCall(number);});
+        let elem = nodes[i];
+        let number = elem.href.slice(4);
+        while(elem.attributes.length > 0)
+            elem.removeAttribute(elem.attributes[0].name);
+        elem.href = '#';
+        elem.addEventListener('click', function(){placeCall(number);});
     }
-        
-    var googleNodes = document.querySelectorAll('[data-number]');
-    for (let i = 0;i<googleNodes.length;i++){
-        let number = googleNodes[i].getAttribute('data-number');
-        googleNodes[i].href = '#';
-        googleNodes[0].removeAttribute("target");
 
-        googleNodes[i].addEventListener('click', function(){placeCall(number);});
+    var googleNodes = document.querySelectorAll('[data-number]');
+    for (let i = 0;i < googleNodes.length;i++){
+        let elem = googleNodes[i];
+
+        let number = elem.getAttribute('data-number');
+        while(elem.attributes.length > 0)
+            elem.removeAttribute(elem.attributes[0].name);
+        elem.href = '#';
+
+        elem.addEventListener('click', function(){placeCall(number);});
     }
 })();
